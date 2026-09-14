@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+:root {
+  --color-primary: #a74911;
+  --color-primary-hover: #8e3e0e;
+  --color-primary-light: #fff8f4;
+  --color-dark: #1a1f2c;
+  --color-dark-muted: #2d3446;
+  --color-bg-base: #f7f9fa;
+  --color-subcard: #fafbfc;
+  --color-accent: #f0ad7a;
+  --color-text-body: #767e89;
+}
+
+body {
+  background-color: var(--color-bg-base);
+  color: var(--color-dark);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+/* Repeating vertical pinstripe background pattern */
+.bg-pinstripes {
+  background-image: repeating-linear-gradient(
+    to right,
+    transparent,
+    transparent 15px,
+    rgba(167, 73, 17, 0.035) 15px,
+    rgba(167, 73, 17, 0.035) 16px
+  );
+}
+
+/* Custom animations */
+@keyframes pulseGlow {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.03);
+    opacity: 1;
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 4s infinite ease-in-out;
+}
