@@ -5,7 +5,7 @@ import Image from "next/image";
 
 export default function Navbar() {
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white/95 backdrop-blur-md">
+    <header className="screen-only sticky top-0 z-50 w-full border-b border-gray-100 bg-white/95 backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <a
@@ -36,7 +36,7 @@ export default function Navbar() {
         <a
           href="https://calendly.com/ganeshghatti/discovery-call"
           target="_blank"
-          rel="noopener noreferrer"
+          rel="noopener"
           className="inline-flex h-10 items-center justify-center rounded-lg bg-[#a74911] px-4 text-[12px] font-extrabold uppercase tracking-wider text-white shadow-sm transition-all hover:bg-[#8e3e0e] hover:shadow-md active:scale-95"
         >
           <span className="hidden sm:inline">Book Free Consultation</span>

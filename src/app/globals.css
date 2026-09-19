@@ -9,7 +9,7 @@
   --color-bg-base: #f7f9fa;
   --color-subcard: #fafbfc;
   --color-accent: #f0ad7a;
-  --color-text-body: #767e89;
+  --color-text-body: #5b6470;
 }
 
 body {
@@ -43,4 +43,13 @@ body {
 
 .animate-pulse-glow {
   animation: pulseGlow 4s infinite ease-in-out;
+}
+
+/* PDF / print report: only the estimate report is printed */
+.print-report { display: none; }
+@page { margin: 10mm 12mm; }
+@media print {
+  html, body, main { background: #fff !important; }
+  .screen-only { display: none !important; }
+  .print-report { display: block; }
 }
