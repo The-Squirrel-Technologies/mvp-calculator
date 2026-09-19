@@ -17,9 +17,8 @@ const aiIcons: Record<AiId, React.ElementType> = { none: Layers, chatbot: Bot, r
 const featureIcons: Record<string, React.ElementType> = { auth: Lock, payments: CreditCard, admin: LayoutDashboard, integrations: Share2, database: Database, i18n: Languages };
 
 const VELOCITIES: { id: VelocityId; name: string; desc: string; flagship?: boolean }[] = [
-  { id: "15days", name: "15-Day Rapid Sprint", desc: "Idea to production-ready MVP in one sprint, with daily updates.", flagship: true },
-  { id: "standard", name: "Standard Sprint", desc: "Relaxed weekly cadence, 5% lower price.", },
-  { id: "retainer", name: "Monthly Retainer", desc: "Ongoing CTO partnership: 2 major features per month plus maintenance." },
+  { id: "sprint", name: "Fixed-Scope Sprint", desc: "One-off build with a fixed price. Flagship: a focused MVP in 15 working days.", flagship: true },
+  { id: "retainer", name: "Monthly Retainer", desc: "Ongoing CTO partnership: 2 major or 3 minor features a month, up to 5 bug fixes, maintenance." },
 ];
 
 const cardBase = "w-full text-left cursor-pointer rounded-xl border-2 p-4 transition-all focus-visible:outline-2 focus-visible:outline-[#a74911]";
@@ -49,8 +48,8 @@ function StepHeader({ n, title, hint }: { n: string; title: string; hint: string
 export default function Calculator() {
   const [platform, setPlatform] = useState<PlatformId>("web");
   const [ai, setAi] = useState<AiId>("none");
-  const [features, setFeatures] = useState<string[]>(["auth", "payments", "admin"]);
-  const [velocity, setVelocity] = useState<VelocityId>("15days");
+  const [features, setFeatures] = useState<string[]>([]);
+  const [velocity, setVelocity] = useState<VelocityId>("sprint");
   const [currency, setCurrency] = useState<Currency>("USD");
   const [toast, setToast] = useState<string | null>(null);
 
@@ -112,7 +111,7 @@ export default function Calculator() {
                       <p className="mt-1 text-xs text-[#5b6470] leading-relaxed">{p.desc}</p>
                       <div className="mt-3 flex items-center justify-between pt-2 border-t border-dashed border-gray-200">
                         <span className="text-[10px] font-bold uppercase text-[#a74911] bg-[#a74911]/10 px-2 py-0.5 rounded">{p.tag}</span>
-                        <span className="text-xs font-bold text-[#1a1f2c]">{money(p[key])}</span>
+                        <span className="text-xs font-bold text-[#1a1f2c]">{money(p[key])} · {p.days} days</span>
                       </div>
                     </button>
                   );
@@ -136,7 +135,7 @@ export default function Calculator() {
                         </span>
                       </span>
                       <span className="flex items-center gap-3 shrink-0">
-                        <span className="text-xs font-bold text-[#1a1f2c]">{a.usd === 0 ? "-" : `+${money(a[key])}`}</span>
+                        <span className="text-xs font-bold text-[#1a1f2c]">{a.usd === 0 ? "-" : `+${money(a[key])} · +${a.days}d`}</span>
                         <Radio on={on} />
                       </span>
                     </button>
@@ -165,7 +164,7 @@ export default function Calculator() {
                       <span className="block text-[11px] text-[#5b6470] leading-snug">{f.desc}</span>
                       <span className="mt-2 flex items-center justify-between pt-1.5 border-t border-dashed border-gray-200 text-[11px]">
                         <span className="text-[10px] font-semibold text-gray-500">{f.tag}</span>
-                        <span className="font-bold text-[#1a1f2c]">+{money(f[key])}</span>
+                        <span className="font-bold text-[#1a1f2c]">+{money(f[key])} · +{f.days}d</span>
                       </span>
                     </button>
                   );
@@ -228,9 +227,11 @@ export default function Calculator() {
                     <span className="text-sm font-black text-[#1a1f2c] mt-0.5 block">{est.complexity}</span>
                   </div>
                 </div>
-                {est.exceedsSprint && (
-                  <p className="mt-3 text-xs text-[#8a4b0f] bg-[#fff8f4] border border-[#a74911]/20 rounded-lg p-2.5">
-                    This scope needs {est.buildDays} build days, more than one 15-day sprint. We would phase it, or pick a Standard Sprint.
+                {!est.isRetainer && (
+                  <p className={`mt-3 text-xs rounded-lg p-2.5 border ${est.within15DaySprint ? "text-[#007956] bg-[#e6f7f0] border-[#007956]/20" : "text-[#8a4b0f] bg-[#fff8f4] border-[#a74911]/20"}`}>
+                    {est.within15DaySprint
+                      ? `${est.buildDays} build days: fits the 15-day sprint.`
+                      : `${est.buildDays} build days (about ${est.weeks} weeks), more than one 15-day sprint. Remove scope to fit 15 days, or we phase the build.`}
                   </p>
                 )}
               </div>

@@ -1,6 +1,6 @@
 export type PlatformId = "web" | "mobile" | "ecosystem" | "automation";
 export type AiId = "none" | "chatbot" | "receptionist" | "ap_automation" | "enterprise_search";
-export type VelocityId = "15days" | "standard" | "retainer";
+export type VelocityId = "sprint" | "retainer";
 export type Currency = "USD" | "INR";
 
 export interface Priced {
@@ -12,13 +12,13 @@ export interface Priced {
 }
 export interface Platform extends Priced { id: PlatformId; days: number; tag: string }
 export interface AiSolution extends Priced { id: AiId; days: number }
-export interface Feature extends Priced { id: string; tag: string }
+export interface Feature extends Priced { id: string; tag: string; days: number }
 
 export const PLATFORMS: Platform[] = [
-  { id: "web", name: "Web Application", desc: "Full-stack Next.js, React and Tailwind CSS responsive web app.", usd: 5499, inr: 450000, days: 15, tag: "Next.js" },
-  { id: "mobile", name: "Mobile App", desc: "Cross-platform iOS and Android app with React Native / Expo.", usd: 6499, inr: 535000, days: 18, tag: "React Native / Expo" },
-  { id: "ecosystem", name: "Web + Mobile Ecosystem", desc: "Web platform and mobile apps sharing a single backend.", usd: 8999, inr: 740000, days: 25, tag: "Next.js + Expo Monorepo" },
-  { id: "automation", name: "AI Automation System", desc: "Headless processing pipelines, API webhooks and agents.", usd: 4499, inr: 370000, days: 12, tag: "Python + FastAPI" },
+  { id: "web", name: "Web Application", desc: "Full-stack Next.js, React and Tailwind CSS responsive web app.", usd: 5999, inr: 490000, days: 15, tag: "Next.js" },
+  { id: "mobile", name: "Mobile App", desc: "Cross-platform iOS and Android app with React Native / Expo.", usd: 6999, inr: 575000, days: 18, tag: "React Native / Expo" },
+  { id: "ecosystem", name: "Web + Mobile Ecosystem", desc: "Web platform and mobile apps sharing a single backend.", usd: 9499, inr: 780000, days: 25, tag: "Next.js + Expo Monorepo" },
+  { id: "automation", name: "AI Automation System", desc: "Headless processing pipelines, API webhooks and agents.", usd: 5999, inr: 490000, days: 12, tag: "Python + FastAPI" },
 ];
 
 export const AI_SOLUTIONS: AiSolution[] = [
@@ -30,19 +30,23 @@ export const AI_SOLUTIONS: AiSolution[] = [
 ];
 
 export const FEATURES: Feature[] = [
-  { id: "auth", name: "Auth & Role Permissions", desc: "OAuth, email login, sessions and team permissions.", usd: 350, inr: 29000, tag: "Supabase / Clerk" },
-  { id: "payments", name: "Payments & Subscriptions", desc: "Stripe, LemonSqueezy or Razorpay checkout and billing portal.", usd: 450, inr: 37000, tag: "Stripe / Razorpay" },
-  { id: "admin", name: "Admin Operations Dashboard", desc: "Analytics, user management, metrics and audit logs.", usd: 650, inr: 54000, tag: "Operations UI" },
-  { id: "integrations", name: "3rd Party API Integrations", desc: "Sync with Slack, HubSpot, Salesforce or WhatsApp webhooks.", usd: 500, inr: 41000, tag: "Webhook Pipelines" },
-  { id: "database", name: "Custom Schema & Cloud Storage", desc: "PostgreSQL design, indexing and S3 file storage.", usd: 400, inr: 33000, tag: "PostgreSQL / S3" },
-  { id: "i18n", name: "Internationalization (i18n)", desc: "Multi-language UI and localization architecture.", usd: 300, inr: 25000, tag: "next-intl" },
+  { id: "auth", name: "Auth & Role Permissions", desc: "OAuth, email login, sessions and team permissions.", usd: 350, inr: 29000, tag: "Supabase / Clerk", days: 1 },
+  { id: "payments", name: "Payments & Subscriptions", desc: "Stripe, LemonSqueezy or Razorpay checkout and billing portal.", usd: 450, inr: 37000, tag: "Stripe / Razorpay", days: 1 },
+  { id: "admin", name: "Admin Operations Dashboard", desc: "Analytics, user management, metrics and audit logs.", usd: 650, inr: 54000, tag: "Operations UI", days: 2 },
+  { id: "integrations", name: "3rd Party API Integrations", desc: "Sync with Slack, HubSpot, Salesforce or WhatsApp webhooks.", usd: 500, inr: 41000, tag: "Webhook Pipelines", days: 1 },
+  { id: "database", name: "Custom Schema & Cloud Storage", desc: "PostgreSQL design, indexing and S3 file storage.", usd: 400, inr: 33000, tag: "PostgreSQL / S3", days: 1 },
+  { id: "i18n", name: "Internationalization (i18n)", desc: "Multi-language UI and localization architecture.", usd: 300, inr: 25000, tag: "next-intl", days: 1 },
 ];
 
 export const RETAINER = { usd: 2250, inr: 185000 };
-/** Discount for the relaxed 3-4 week cadence versus the 15-day sprint. */
-export const STANDARD_DISCOUNT = 0.05;
-/** A single flagship sprint is 15 working days. */
+/**
+ * Published Tier 1 "Product Development" price on thesquirrel.tech. No platform is priced below it.
+ * A single flagship sprint is 15 working days. Add-on build days follow the ~$400 per build day
+ * that the AI layer prices already imply (chatbot 1,200 = 3 days, RAG 1,600 = 4 days), minimum 1 day.
+ */
+export const MIN_ENGAGEMENT_USD = 5999;
 export const SPRINT_DAYS = 15;
+export const USD_PER_ADDON_DAY = 400;
 const BASE_STACK = ["Tailwind CSS", "TypeScript", "Vercel Cloud"];
 
 export interface Selection {
@@ -61,17 +65,19 @@ export interface LineItem {
 
 export interface Estimate {
   lines: LineItem[];
-  /** Sum of platform + AI + features before any discount. */
-  subtotal: number;
   /** Amount charged. For retainers this is the monthly fee. */
   total: number;
   isRetainer: boolean;
   /** One-off price of the selected scope, shown as a comparison against the retainer. */
   oneOffScope: number;
+  /** Platform + AI layer + feature days. */
   buildDays: number;
+  /** Working days shown to the user, e.g. "18 Days". */
   timeline: string;
-  /** True when a 15-day sprint is selected but the scope needs more than one sprint. */
-  exceedsSprint: boolean;
+  /** Approximate calendar weeks (5 working days a week). */
+  weeks: number;
+  /** True when the whole scope fits the 15-day sprint guarantee. */
+  within15DaySprint: boolean;
   complexity: "Lean MVP" | "Moderate" | "Enterprise";
   stack: string[];
   platformName: string;
@@ -90,45 +96,29 @@ export function estimate(sel: Selection): Estimate {
   const lines: LineItem[] = items.map((i) => ({ name: i.name, tag: i.tag, cost: i[key] }));
   const subtotal = lines.reduce((sum, l) => sum + l.cost, 0);
   const usdSubtotal = items.reduce((sum, i) => sum + i.usd, 0);
-  const buildDays = platform.days + ai.days;
+  const buildDays = platform.days + ai.days + features.reduce((d, f) => d + f.days, 0);
+  const weeks = Math.ceil(buildDays / 5);
 
   const stack = Array.from(new Set([...items.map((i) => i.tag).filter((t): t is string => !!t), ...BASE_STACK]));
 
   const isRetainer = sel.velocity === "retainer";
-  let total = subtotal;
-  let timeline = "";
-  let exceedsSprint = false;
-  let finalLines = lines;
+  const total = isRetainer ? RETAINER[key] : subtotal;
+  const finalLines: LineItem[] = isRetainer ? [{ name: "Monthly CTO retainer", tag: null, cost: total }] : lines;
 
-  if (isRetainer) {
-    total = RETAINER[key];
-    timeline = "Continuous delivery";
-    finalLines = [{ name: "Monthly CTO retainer", tag: null, cost: total }];
-  } else if (sel.velocity === "standard") {
-    const discount = Math.round(subtotal * STANDARD_DISCOUNT);
-    total = subtotal - discount;
-    finalLines = [...lines, { name: `Standard-sprint discount (${STANDARD_DISCOUNT * 100}%)`, tag: null, cost: -discount }];
-    const weeks = Math.max(3, Math.ceil(buildDays / 5));
-    timeline = `${weeks} - ${weeks + 1} Weeks`;
-  } else {
-    exceedsSprint = buildDays > SPRINT_DAYS;
-    timeline = exceedsSprint ? `${buildDays} Days` : "15 Days (Guaranteed)";
-  }
-
-  // Complexity depends on the scope selected, never on the retainer fee or a discount, and always uses USD list prices.
+  // Complexity depends on the scope selected (never the retainer fee) and always uses USD list prices.
   let complexity: Estimate["complexity"] = "Moderate";
-  if (usdSubtotal > 8000 || features.length >= 5) complexity = "Enterprise";
-  else if (usdSubtotal < 5500 && features.length <= 2) complexity = "Lean MVP";
+  if (usdSubtotal > 8500 || features.length >= 5) complexity = "Enterprise";
+  else if (usdSubtotal < 6500 && features.length <= 2) complexity = "Lean MVP";
 
   return {
     lines: finalLines,
-    subtotal,
     total,
     isRetainer,
     oneOffScope: subtotal,
     buildDays,
-    timeline,
-    exceedsSprint,
+    timeline: isRetainer ? "Continuous delivery" : `${buildDays} Days`,
+    weeks,
+    within15DaySprint: buildDays <= SPRINT_DAYS,
     complexity,
     stack,
     platformName: platform.name,

@@ -44,7 +44,7 @@ export default function PrintReport({ est, currency, velocityName }: { est: Esti
       <h2 style={h2}>Notes</h2>
       <ul style={{ fontSize: "10px", paddingLeft: "16px", lineHeight: 1.4, listStyle: "disc" }}>
         <li>Planning estimate based on The Squirrel Technologies&apos; list prices; a fixed quote follows a scoping call.</li>
-        <li>Build time is platform plus AI layer ({est.buildDays} days). A 15-day sprint is guaranteed only when the scope fits in 15 days.</li>
+        <li>Build time is {est.buildDays} working days (platform + AI layer + features). The 15-day sprint guarantee applies only when the whole scope fits in 15 days.</li>
         <li>Includes 100% source code and IP handover and 30 days of launch fixes.</li>
       </ul>
 

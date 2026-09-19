@@ -9,8 +9,8 @@ Free, open-source calculator that turns a platform, an AI layer and a feature li
 - Four platform tracks: web app, mobile app, web + mobile, AI automation backend
 - AI layer options: support agent, voice receptionist, accounts-payable OCR, enterprise search (RAG)
 - Six add-on features, USD and INR pricing
-- Three delivery models: 15-day sprint, standard sprint (5% lower), monthly retainer
-- Every total is the exact sum of the itemised lines; the timeline is derived from the build days of the selected scope
+- Two delivery models: fixed-scope sprint (from $5,999, the published Product Development price) and the $2,250/month retainer
+- Every platform, AI layer and feature adds both cost and build days; the total is the exact sum of the itemised lines and the 15-day guarantee is shown only when the scope fits
 - One-page PDF report (Save PDF), copy-to-clipboard summary, pre-filled booking and WhatsApp links
 
 ## Embed it on your site

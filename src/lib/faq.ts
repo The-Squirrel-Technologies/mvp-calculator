@@ -1,7 +1,7 @@
 export const FAQS: { q: string; a: string }[] = [
   {
     q: "How does the 15-day sprint work?",
-    a: "A focused build with a clear scope: architecture and design first, then core engineering and AI integrations, then testing, CI/CD and deployment. You get regular progress updates. The 15-day timeline applies when the scope fits in one sprint; the calculator shows the build days for larger scopes and we flag complex dependencies before work starts.",
+    a: "A focused build with a clear scope: architecture and design first, then core engineering and AI integrations, then testing, CI/CD and deployment. You get regular progress updates. The 15-day timeline applies when the scope fits in one sprint. Every platform, AI layer and feature in the calculator adds build days, so larger scopes show a longer timeline, and we flag complex dependencies before work starts.",
   },
   {
     q: "Do I own the source code?",
@@ -9,7 +9,7 @@ export const FAQS: { q: string; a: string }[] = [
   },
   {
     q: "How accurate is this estimate?",
-    a: "It is a planning estimate from The Squirrel Technologies' list prices for each platform, AI layer and feature, so the total is exactly the sum of the lines shown. A fixed quote follows a scoping call, where we confirm the scope and any integrations that could change it.",
+    a: "It is a planning estimate. Prices start at the $5,999 Product Development price on thesquirrel.tech and add the list price and build days of each AI layer and feature, so the total is exactly the sum of the lines shown. A fixed quote follows a scoping call, where we confirm the scope and any integrations that could change it.",
   },
   {
     q: "What if my requirements change?",
